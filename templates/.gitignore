@@ -1,0 +1,6 @@
+/.project
+/.pydevproject
+*.pyc
+settings_local.py
+{{projectname}}.db
+{{projectname}}.log
