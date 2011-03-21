@@ -1,8 +1,8 @@
 ## Django
 
-#-e svn+http://code.djangoproject.com/svn/django/tags/releases/1.2.5#egg=django
+-e svn+http://code.djangoproject.com/svn/django/tags/releases/1.2.5#egg=django
 # django 1.3alpha release
--e git://github.com/jacobian/django.git@2c477b1f0463108077f0#egg=django
+#-e git://github.com/jacobian/django.git@2c477b1f0463108077f0#egg=django
 
 django-debug-toolbar==0.8.4
 django-admin-tools==0.4.0

@@ -103,7 +103,7 @@ def pip(projectpath):
     if os.path.exists(env.projectpath):
         pip_path = env.projectpath
     else:
-        pip_path = template_folder
+        pip_path = env.template_folder
         
     print local('/bin/bash -c "source %s/bin/activate && pip install pip pyinotify && pip install -r %s/dep.pip"' % (env.projectenvpath, pip_path))
         
