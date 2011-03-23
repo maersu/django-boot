@@ -1,7 +1,7 @@
 ## Django
 
 # django 1.3
--e git://github.com/jacobian/django.git@b826d82f7dd474631379#egg=django
+-e git://github.com/django/django.git@eca4737a3fb1f4645431#egg=django
 
 django-debug-toolbar==0.8.4
 django-admin-tools==0.4.0
