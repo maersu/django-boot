@@ -6,10 +6,6 @@ from fabric.contrib.files import contains, exists
 import fileinput
 from random import choice
 
-from fabric.version import VERSION
-if VERSION > (0, 9, 2, "final", 0):
-    abort("Fabric > 0.9.2: Check argument order of fabric.contrib.files.contains(...)")
-
 env.this_file = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 env.template_folder = os.path.join(env.this_file, 'templates')
 
