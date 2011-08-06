@@ -12,10 +12,6 @@ TEMPLATE_DEBUG = DEBUG
 
 ugettext = lambda s: s
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
-
 MANAGERS = ADMINS
 
 # Local time zone for this installation. Choices can be found here:
