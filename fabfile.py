@@ -88,7 +88,7 @@ def bootstrap(projectpath):
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
     if _check_exists_skip(env.projectenvpath) == False:
-        print local("virtualenv --no-site-packages %(projectenvpath)s" % env)
+        print local("virtualenv --no-site-packages  --python=python2.7 %(projectenvpath)s" % env)
         local("mkdir %(projectenvpath)s/lib/pkgconfig/" % env)
         local("ln -s %(projectenvpath)s/lib %(projectenvpath)s/lib64" % env)
         
@@ -101,6 +101,8 @@ def pip(projectpath):
     else:
         pip_path = env.template_folder
         
-    print local('/bin/bash -c "source %s/bin/activate && pip install pip pyinotify && pip install -r %s/dep.pip"' % (env.projectenvpath, pip_path))
+    print local('/bin/bash -c "source %s/bin/activate '
+                '&& pip install --upgrade pip pyinotify '
+                '&& pip install -r %s/dep.pip"' % (env.projectenvpath, pip_path))
         
      

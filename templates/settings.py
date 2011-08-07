@@ -101,7 +101,7 @@ INSTALLED_APPS = (
 )
 
 if DEBUG:
-    INSTALLED_APPS += ('debug_toolbar','django.contrib.webdesign')
+    INSTALLED_APPS += ('debug_toolbar','django.contrib.webdesign','lettuce.django')
     DEBUG_TOOLBAR_PANELS = (
         'debug_toolbar.panels.sql.SQLDebugPanel',
         #'debug_toolbar.panels.version.VersionDebugPanel',
