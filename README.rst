@@ -1,7 +1,7 @@
 django-boot
 ==============================================================================
 
-Attention: Only works on linux
+Attention: linux only
 
 fab bootstrap:/home/workspace/projectname/
 
