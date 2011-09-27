@@ -2,6 +2,7 @@ django-boot
 ==============================================================================
 
 Attention: linux only
+Prerequisites: Fabric, Git, Pip, Compass, Virtualenv
 
 fab bootstrap:/home/workspace/projectname/
 
