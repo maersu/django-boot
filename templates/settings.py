@@ -100,8 +100,13 @@ INSTALLED_APPS = (
     'django_extensions',
 )
 
-if DEBUG:
-    INSTALLED_APPS += ('debug_toolbar','django.contrib.webdesign')
+if DEBUG:    
+    INTERNAL_IPS = ('127.0.0.1',)
+    INSTALLED_APPS += ('django.contrib.webdesign','lettuce.django')
+
+if USE_DEBUG_TOOLBAR:
+    
+    INSTALLED_APPS += ('debug_toolbar',)
     DEBUG_TOOLBAR_PANELS = (
         'debug_toolbar.panels.sql.SQLDebugPanel',
         #'debug_toolbar.panels.version.VersionDebugPanel',
@@ -115,9 +120,8 @@ if DEBUG:
     )    
     DEBUG_TOOLBAR_URL_EXCLUDE = (
         '/site_media/{% extends "base.html" %}1/',        
-    )
-
-if USE_DEBUG_TOOLBAR:
+    )    
+    
     DEBUG_TOOLBAR_CONFIG = {
      'INTERCEPT_REDIRECTS': False,  # Setting to True will intercept redirects. (True)
      'LOGGING_ENABLED': False,     # Enable logging. (True)                       

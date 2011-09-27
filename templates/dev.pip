@@ -1,0 +1,5 @@
+# deplyoment
+fabric==1.2.2
+
+# testing
+lettuce==0.1.33 

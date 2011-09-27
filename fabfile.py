@@ -7,8 +7,10 @@ import fileinput
 from random import choice
 
 from fabric.version import VERSION
-if VERSION > (0, 9, 2, "final", 0):
-    abort("Fabric > 0.9.2: Check argument order of fabric.contrib.files.contains(...)")
+if VERSION < (0, 9, 3, "final", 0):
+    abort("Fabric < 0.9.3: Check argument order of fabric.contrib.files.contains(...)")
+
+print VERSION
 
 env.this_file = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 env.template_folder = os.path.join(env.this_file, 'templates')
@@ -24,8 +26,11 @@ def _setlocal_env(projectpath):
 
 def _check_exists_skip(path):
     if os.path.exists(path):
-        if prompt('Path %s already exists. Overwrite? ' % path, default='no') == 'yes':
+        answer = prompt('Path %s already exists. Overwrite [yes] or merge [merge]? ' % path, default='no')
+        if answer == 'yes':
             local("rm -rf '%s'" % path)
+        elif answer == 'merge':
+            warn("merge into '%s'" % path)            
         else:
             warn('skip step')
             return True
@@ -51,7 +56,12 @@ PROJECT_TEMPLATE = [
     ('log', '.keep'),
     ('src',),
     ('log', '.keep'),
-    ('', 'dep.pip'),
+    ('env', 'req.pip'),
+    ('env', 'dev.pip'),
+    ('env', 'fabfile.py'),    
+    ('env', 'robots.txt'), 
+    ('env/stage', 'settings_local.py'),
+    ('env/prod', 'settings_local.py'),    
     ('', 'README.rst'),
     ('', '.gitignore')    
 ]
@@ -67,11 +77,17 @@ SRC_TEMPLATE = [
 ]
 
 def bootstrap(projectpath):
-    virtualenv(projectpath)
     
-    if _check_exists_skip(projectpath) == False:
-        _setlocal_env(projectpath)
+    skip_project = _check_exists_skip(projectpath)
+    
+    if not skip_project:
         _create_from_template(projectpath, PROJECT_TEMPLATE)
+    
+    virtualenv(projectpath)
+        
+    if not skip_project:
+        _setlocal_env(projectpath)
+        
         print local('/bin/bash -c " cd %(projectpath)s/src && source %(projectenvpath)s/bin/activate && django-admin.py startproject %(projectname)s"' % env)
         _create_from_template(os.path.join(projectpath,'src', env.projectname), SRC_TEMPLATE)
            
@@ -85,10 +101,11 @@ def bootstrap(projectpath):
                     for line in fileinput.input(filepath,inplace=1):
                         for key, value in replace_dict.items():
                             line = line.replace("{{%s}}" % key, value)
-                        sys.stdout.write(line)      
-        os.path.walk(env.projectpath, _replace_in_files, None)
-        local("cp %(template_folder)s/dep.pip %(projectpath)s/" % env)
+                        sys.stdout.write(line)
         
+        print local('/bin/bash -c " cd %(projectpath)s/src && source %(projectenvpath)s/bin/activate && django-admin.py syncdb"' % env)
+        os.path.walk(env.projectpath, _replace_in_files, None)
+            
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
     if _check_exists_skip(env.projectenvpath) == False:
@@ -99,12 +116,16 @@ def virtualenv(projectpath):
     pip(projectpath)
 
 def pip(projectpath):
+    
+    def _install_pip_file(pip_file):
+        local('/bin/bash -c "source %s/bin/activate && pip install pip pyinotify && pip install -r %s/env/%s"' % (env.projectenvpath, pip_path, pip_file))
+    
     _setlocal_env(projectpath)
     if os.path.exists(env.projectpath):
         pip_path = env.projectpath
     else:
         pip_path = env.template_folder
-        
-    print local('/bin/bash -c "source %s/bin/activate && pip install pip pyinotify && pip install -r %s/dep.pip"' % (env.projectenvpath, pip_path))
-        
+    
+    _install_pip_file('req.pip')
+    _install_pip_file('dev.pip')
      
