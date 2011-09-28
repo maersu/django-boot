@@ -11,6 +11,7 @@ from fabric.version import VERSION
 if VERSION < (0, 9, 3, "final", 0):
     warn("Fabric < 0.9.3: Check argument order of fabric.contrib.files.contains(...)")
 
+env.python_version = '2.6'
 env.this_file = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 env.template_folder = os.path.join(env.this_file, 'templates')
 
@@ -47,7 +48,13 @@ def _create_from_template(root_path, templates):
                 local("cp %s %s" % (template_path , dirpath))
             else:
                 local("touch %s" % (os.path.join(dirpath,template[1])))
-        
+
+def _exec_mngmt_command(command, path='%(projectpath)s/src/%(projectname)s', manage_py='python manage.py'):
+    
+    #s = '/bin/bash -c " cd %(projectpath)s/src/%(projectname)s && source %(projectenvpath)s/bin/activate && django-admin.py '+command+'"'
+    s = '/bin/bash -c "cd '+path+' && source %(projectenvpath)s/bin/activate && '+manage_py+' '+command+' --settings=%(projectname)s.settings "'
+    print local(s % env)
+
 PROJECT_TEMPLATE = [
     ('compass/config', 'config.rb'),
     ('compass/config/sass', '.keep'),
@@ -86,8 +93,8 @@ def bootstrap(projectpath):
         
     if not skip_project:
         _setlocal_env(projectpath)
-        
-        print local('/bin/bash -c " cd %(projectpath)s/src && source %(projectenvpath)s/bin/activate && django-admin.py startproject %(projectname)s"' % env)
+
+        _exec_mngmt_command('startproject %(projectname)s', path='%(projectpath)s/src/', manage_py='django-admin.py')
         _create_from_template(os.path.join(projectpath,'src', env.projectname), SRC_TEMPLATE)
            
         replace_dict = {'projectpath': env.projectpath, 'projectname': env.projectname, 
@@ -102,15 +109,13 @@ def bootstrap(projectpath):
                             line = line.replace("{{%s}}" % key, value)
                         sys.stdout.write(line)
         
-        print local('/bin/bash -c " cd %(projectpath)s/src && source %(projectenvpath)s/bin/activate && django-admin.py syncdb"' % env)
         os.path.walk(env.projectpath, _replace_in_files, None)
-            
+        _exec_mngmt_command('syncdb' % env)
+
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
     if _check_exists_skip(env.projectenvpath) == False:
-        print local("virtualenv --no-site-packages  --python=python2.7 %(projectenvpath)s" % env)
-        local("mkdir %(projectenvpath)s/lib/pkgconfig/" % env)
-        local("ln -s %(projectenvpath)s/lib %(projectenvpath)s/lib64" % env)
+        print local("virtualenv --no-site-packages  --python=python%(python_version)s %(projectenvpath)s" % env)
         
     pip(projectpath)
 
@@ -126,6 +131,6 @@ def pip(projectpath):
         pip_path = env.projectpath
     else:
         pip_path = env.template_folder
-    
+
+    _install_pip_file('dev.pip')    
     _install_pip_file('req.pip')
-    _install_pip_file('dev.pip')

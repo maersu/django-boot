@@ -24,7 +24,7 @@ def _remote_path(*args):
     return os.path.join(env.remote_app, *args)
 
 # environments
-env.python_version = '2.6'
+env.python_version = '{{python_version}}'
 env.hosts = ['<some.host>']
 env.local_app = _local_path('src', '{{projectname}}')
 env.local_static_root = _local_path('site_media')
