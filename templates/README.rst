@@ -26,6 +26,8 @@ get and install packages (or update)
 source {{projectname}}-env/bin/activate
 pip install pip pyinotify
 pip install -r dependencies.pip
+pip install -r req.pip
+pip install -r dev.pip
 ```
 
 deactivate env
