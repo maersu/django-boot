@@ -4,3 +4,4 @@
 settings_local.py
 {{projectname}}.db
 {{projectname}}.log
+*.prefs

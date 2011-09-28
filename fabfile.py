@@ -2,15 +2,14 @@ import os, sys, re, commands
 from fabric.api import *
 from fabric.contrib.console import *
 from fabric.contrib.project import *
-from fabric.contrib.files import contains, exists
+from fabric.contrib.files import exists
+from fabric.utils import warn
 import fileinput
 from random import choice
 
 from fabric.version import VERSION
 if VERSION < (0, 9, 3, "final", 0):
-    abort("Fabric < 0.9.3: Check argument order of fabric.contrib.files.contains(...)")
-
-print VERSION
+    warn("Fabric < 0.9.3: Check argument order of fabric.contrib.files.contains(...)")
 
 env.this_file = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 env.template_folder = os.path.join(env.this_file, 'templates')
@@ -109,7 +108,7 @@ def bootstrap(projectpath):
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
     if _check_exists_skip(env.projectenvpath) == False:
-        print local("virtualenv --no-site-packages %(projectenvpath)s" % env)
+        print local("virtualenv --no-site-packages  --python=python2.7 %(projectenvpath)s" % env)
         local("mkdir %(projectenvpath)s/lib/pkgconfig/" % env)
         local("ln -s %(projectenvpath)s/lib %(projectenvpath)s/lib64" % env)
         
@@ -118,7 +117,9 @@ def virtualenv(projectpath):
 def pip(projectpath):
     
     def _install_pip_file(pip_file):
-        local('/bin/bash -c "source %s/bin/activate && pip install pip pyinotify && pip install -r %s/env/%s"' % (env.projectenvpath, pip_path, pip_file))
+        print local('/bin/bash -c "source %s/bin/activate '
+              '&& pip install pip pyinotify '
+              ' && pip install -r %s/env/%s"' % (env.projectenvpath, pip_path, pip_file))
     
     _setlocal_env(projectpath)
     if os.path.exists(env.projectpath):
@@ -128,4 +129,3 @@ def pip(projectpath):
     
     _install_pip_file('req.pip')
     _install_pip_file('dev.pip')
-     

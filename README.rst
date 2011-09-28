@@ -1,8 +1,15 @@
 django-boot
 ==============================================================================
 
-fab bootstrap:/home/workspace/projectname/
+Attention: linux only
 
-fab virtualenv:/home/workspace/projectname/
+Prerequisites: Fabric, Git, Pip, Compass, Virtualenv
 
-fab pip:/home/workspace/projectname/
+pip install fabric==1.2.2
+
+
+* fab bootstrap:/home/workspace/projectname/
+* fab virtualenv:/home/workspace/projectname/
+* fab pip:/home/workspace/projectname/
+
+
