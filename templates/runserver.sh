@@ -12,5 +12,5 @@ COMPASS_PID=$!
 popd
 
 pushd  $approot/src/{{projectname}}/
-../../../{{projectname}}-env/bin/python manage.py runserver app.dev:8000 --settings={{projectname}}.settings
+../../../{{projectname}}-env/bin/python manage.py runserver 127.0.0.1:8000 --settings={{projectname}}.settings
 popd

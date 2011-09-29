@@ -58,6 +58,7 @@ STATICFILES_DIRS = (
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_TOOLS_THEMING_CSS = 'css/admin-theming.css'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '{{projectsecret}}'

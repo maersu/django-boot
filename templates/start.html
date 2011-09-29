@@ -1,5 +1,9 @@
 {% extends "admin/base_site.html" %}
 
+{% block extrahead %}
+<link rel="stylesheet" href="/static/css/screen.css">
+{% endblock %}
+
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">Admin Interface</a></div>{% endblock %}
 
 {% block title %}{{projectname}}{% endblock %}
@@ -11,5 +15,10 @@
 {% for line in readme.readlines %}{{line}}{% endfor %}
 </pre>
 
-<a href="https://github.com/maersu/django-boot">Powered by django-boot</a>
 {% endblock %}
+
+{% block footer %}
+<div id="footer">
+<a href="https://github.com/maersu/django-boot">Powered by django-boot</a> | 
+&copy; {{projectname}}
+</div>{% endblock %}

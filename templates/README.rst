@@ -55,7 +55,8 @@ cd() {
 
 Eclipse: Configure Python Interpreter
 -------------------------------------
-Under Preferences > Pydev > Interpreter - Python add a new interpreter named `{{projectname}}` and choose `{{projectname}}-env/bin/python` as the Interpreter Executable.
+Under Preferences > Pydev > Interpreter - Python add a new interpreter named `{{projectname}}` 
+and choose `{{projectname}}-env/bin/python` as the Interpreter Executable.
 
 Hosts File
 ----------

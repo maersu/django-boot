@@ -61,7 +61,11 @@ def _exec_mngmt_command(command, path='%(projectpath)s/src/%(projectname)s', man
 
 PROJECT_TEMPLATE = [
     ('compass/config', 'config.rb'),
-    ('compass/config/sass', '.keep'),
+    ('compass/config/sass', 'screen.scss'),
+    ('compass/config/sass', '_const.scss'),
+    ('compass/config/sass', '_fonts.scss'),
+    ('compass/config/sass', '_layout.scss'),
+    ('compass/config/sass', '_forms.scss'),
     ('db', '.keep'),
     ('log', '.keep'),
     ('src',),
@@ -77,9 +81,6 @@ PROJECT_TEMPLATE = [
 ]
 
 SRC_TEMPLATE = [
-    ('static/css/', '.keep'),
-    ('static/img/', '.keep'),
-    ('static/js/', '.keep'),
     ('media/', '.keep'),
     ('', 'settings_local.py'),
     ('', 'urls.py'),    
@@ -90,7 +91,10 @@ SRC_TEMPLATE = [
 CORE_TEMPLATE = [
     ('core/templates/', 'start.html'),
     ('core/', 'core_urls.py', 'urls.py'),
-    ('core/', 'views.py'), 
+    ('core/', 'views.py'),
+    ('core/static/css/', 'admin-theming.css'),
+    ('core/static/img/', '.keep'),
+    ('core/static/js/', '.keep'),     
 ]
 
 
