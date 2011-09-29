@@ -51,7 +51,7 @@ MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-                    os.path.join(PROJECT_ROOT, '../../../kluster-env/lib/python2.6/site-packages/admin_tools/media/'),
+                    os.path.join(PROJECT_ROOT, '../../../{{projectname}}-env/lib/python2.6/site-packages/admin_tools/media/'),
 )
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
