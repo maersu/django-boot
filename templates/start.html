@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">Admin Interface</a></div>{% endblock %}
+
+{% block title %}{{projectname}}{% endblock %}
+
+{% block content %}
+<h1>Welcome to {{projectname}}</h1>
+
+<pre style="background-color: #EEEEEE; padding:1em; color: #111111">
+{% for line in readme.readlines %}{{line}}{% endfor %}
+</pre>
+
+<a href="https://github.com/maersu/django-boot">Powered by django-boot</a>
+{% endblock %}

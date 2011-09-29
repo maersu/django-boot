@@ -45,6 +45,10 @@ def _create_from_template(root_path, templates):
             template_path = os.path.join(env.template_folder,template[1])
             
             if os.path.exists(template_path):
+                
+                if len(template) > 2:
+                    dirpath = os.path.join(dirpath, template[2])
+                    
                 local("cp %s %s" % (template_path , dirpath))
             else:
                 local("touch %s" % (os.path.join(dirpath,template[1])))
@@ -73,14 +77,22 @@ PROJECT_TEMPLATE = [
 ]
 
 SRC_TEMPLATE = [
-    ('media/css/', '.keep'),
-    ('media/img/', '.keep'),
-    ('media/js/', '.keep'),
+    ('static/css/', '.keep'),
+    ('static/img/', '.keep'),
+    ('static/js/', '.keep'),
+    ('media/', '.keep'),
     ('', 'settings_local.py'),
     ('', 'urls.py'),    
     ('', 'settings.py'),    
     ('', 'runserver.sh'),  
 ]
+
+CORE_TEMPLATE = [
+    ('core/templates/', 'start.html'),
+    ('core/', 'core_urls.py', 'urls.py'),
+    ('core/', 'views.py'), 
+]
+
 
 def bootstrap(projectpath):
     
@@ -110,7 +122,10 @@ def bootstrap(projectpath):
                         sys.stdout.write(line)
         
         os.path.walk(env.projectpath, _replace_in_files, None)
-        _exec_mngmt_command('syncdb' % env)
+        _exec_mngmt_command('startapp core')
+        _exec_mngmt_command('syncdb')
+        _create_from_template(os.path.join(projectpath,'src', env.projectname), CORE_TEMPLATE)
+        os.path.walk(env.projectpath, _replace_in_files, None)
 
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
