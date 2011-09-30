@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Django settings for prio project.
 
 import sys
@@ -106,6 +107,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
+    'django.contrib.staticfiles',    
     'django_extensions',
     '{{projectname}}.core',
 )
