@@ -127,7 +127,7 @@ def bootstrap(projectpath):
         
         os.path.walk(env.projectpath, _replace_in_files, None)
         _exec_mngmt_command('startapp core')
-        _exec_mngmt_command('syncdb')
+        #_exec_mngmt_command('syncdb')
         _create_from_template(os.path.join(projectpath,'src', env.projectname), CORE_TEMPLATE)
         os.path.walk(env.projectpath, _replace_in_files, None)
 
