@@ -1,0 +1,13 @@
+syntax: glob
+
+/.project
+/.pydevproject
+.idea/*
+*.pyc
+deinkurs/settings_local.py
+deinkurs.dat
+*.out
+deinkurs.log
+*.prefs
+.sass-cache
+deinkurs/static
