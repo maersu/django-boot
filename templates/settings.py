@@ -76,6 +76,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.request',
+    'django.core.context_processors.static', 
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,7 +108,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-    'django.contrib.staticfiles',    
+    'django.contrib.staticfiles', 
     'django_extensions',
     'djangojames',
     '{{projectname}}.core',

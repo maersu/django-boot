@@ -65,6 +65,7 @@ PROJECT_TEMPLATE = [
     ('compass/config/sass', '_const.scss'),
     ('compass/config/sass', '_fonts.scss'),
     ('compass/config/sass', '_layout.scss'),
+    ('compass/config/sass', '_initializr.scss'),
     ('compass/config/sass', '_forms.scss'),
     ('db', '.keep'),
     ('log', '.keep'),
@@ -89,12 +90,14 @@ SRC_TEMPLATE = [
 ]
 
 CORE_TEMPLATE = [
+    ('core/templates/', 'base.html'),
     ('core/templates/', 'start.html'),
     ('core/', 'core_urls.py', 'urls.py'),
     ('core/', 'views.py'),
     ('core/static/css/', 'admin-theming.css'),
     ('core/static/img/', '.keep'),
-    ('core/static/js/', '.keep'),     
+    ('core/static/js/lib/', 'jquery-1.7.1.min.js'),
+    ('core/static/js/lib/', 'modernizr-2.0.6.min.js'),
 ]
 
 
