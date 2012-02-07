@@ -55,6 +55,10 @@ STATICFILES_DIRS = (
                     os.path.join(PROJECT_ROOT, '../../../{{projectname}}-env/lib/python2.6/site-packages/admin_tools/media/'),
 )
 
+FIXTURE_DIRS = (
+    os.path.join(PROJECT_ROOT, 'external_fixtures/'),
+)
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
