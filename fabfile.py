@@ -86,7 +86,7 @@ SRC_TEMPLATE = [
     ('', 'settings_local.py'),
     ('', 'urls.py'),    
     ('', 'settings.py'),    
-    ('', 'runserver.sh'),  
+    ('external_fixtures/', 'django_contrib_auth_user.json'),
 ]
 
 CORE_TEMPLATE = [
