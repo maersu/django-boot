@@ -1,3 +1,4 @@
+from django import template
 from django.conf import settings
 from django.conf.urls.defaults import *
 from django.conf.urls.static import static
@@ -5,6 +6,8 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
+
+template.add_to_builtins('django.templatetags.i18n')
 
 urlpatterns = patterns('',
     url(r'^admin_tools/', include('admin_tools.urls')),
