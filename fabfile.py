@@ -84,6 +84,7 @@ PROJECT_TEMPLATE = [
 SRC_TEMPLATE = [
     ('media/', '.keep'),
     ('', 'settings_local.py'),
+    ('', 'settings_local.example.py'),
     ('', 'urls.py'),    
     ('', 'settings.py'),    
     ('external_fixtures/', 'django_contrib_auth_user.json'),
