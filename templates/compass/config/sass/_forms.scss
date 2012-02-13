@@ -1,10 +1,6 @@
-input {
-	color: $font-dark;
-}
 button,
 input, .ui-widget input, 
 textarea, .ui-widget textarea {
-	@include font-normal;
 	font-family: inherit;
 }
 input[type=text]:focus,
@@ -17,7 +13,7 @@ textarea:focus {
 form {
 	ul {
 		margin: 0;
-		margin-bottom:$space-20;
+		margin-bottom:20px;
 	}
 	ul li {
 		list-style:none;
@@ -40,13 +36,12 @@ form div.error, div.error-box {
 
 form.common-form {
 	background-color: $light-gray;
-	padding: $space-20;
 	@include border-radius($corner-small);
 	&.transparent{
 		background-color:  transparent;
 	}
 	&.content-right {
-		padding: $space-20 $space-20 $space-20 0px;
+		padding: 20px 20px 20px 0px;
 		select {
 			width: 160px;
 		}
@@ -78,7 +73,7 @@ form.common-form {
 		padding-left: 0px;
 	}
 	div.row {
-		margin-top: $space-10;
+		margin-top: 10px;
 		&.first {
 			margin-top: 0px;
 		}
@@ -89,7 +84,6 @@ form.common-form {
 	}
 	div.help-text {
 		padding-bottom: 3px;
-		@include font-small;
 	}
 	div.checkbox {
 		@include clearfix;
@@ -99,15 +93,10 @@ form.common-form {
 		div.label-text {
 			padding-left: 3px;
 			@include float-left;
-			
-			div.title {
-				font-weight: bold;
-			}
-		
 		}
 	}
 	fieldset {
-		margin-bottom: $space-20;
+		margin-bottom: 20px;
 		&.last {
 			margin-bottom: 0px;
 		}
@@ -129,7 +118,6 @@ form.common-form {
 		}
 	}
 	&.small {
-		@include font-small;
 		input[type="text"], 
 		input[type="password"], 
 		textarea, 
@@ -138,13 +126,13 @@ form.common-form {
 			width: 230px - 4px;
 		}
 		fieldset {
-			margin-bottom: $space-10;
+			margin-bottom: 10px;
 			&.last {
 				margin-bottom: 0px;
 			}
 		}
 		div.row {
-			margin-top: $space-10 / 2;
+			margin-top: 5px;
 			&.first {
 				margin-top: 0px;
 			}

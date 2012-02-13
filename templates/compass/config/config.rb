@@ -5,7 +5,7 @@ css_dir = "../../src/{{projectname}}/core/static/css"
 sass_dir = "sass"
 images_dir = "../../src/{{projectname}}/core/static/img"
 javascripts_dir = "../../src/{{projectname}}/core/static/js"
-output_style = :compact
+output_style = :compressed
 line_comments = false
 # To enable relative paths to assets via compass helper functions. Uncomment:
 # relative_assets = true

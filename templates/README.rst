@@ -1,5 +1,5 @@
 {{projectname}}
-==============================================================================
+===============================
 
 Compass/SASS
 -------------
@@ -24,7 +24,7 @@ get and install packages (or update)
 ************************************
 ```
 source {{projectname}}-env/bin/activate
-pip install pip pyinotify
+pip install pip
 pip install -r dependencies.pip
 pip install -r req.pip
 pip install -r dev.pip
@@ -57,12 +57,4 @@ Eclipse: Configure Python Interpreter
 -------------------------------------
 Under Preferences > Pydev > Interpreter - Python add a new interpreter named `{{projectname}}` 
 and choose `{{projectname}}-env/bin/python` as the Interpreter Executable.
-
-Hosts File
-----------
-```
-sudo vim /etc/hosts
-
-127.0.0.1       app.dev
-```
 
