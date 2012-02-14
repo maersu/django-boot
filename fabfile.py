@@ -5,7 +5,9 @@ from fabric.contrib.project import *
 from fabric.contrib.files import exists
 from fabric.utils import warn
 import fileinput
+import tempfile
 from random import choice
+import glob, shutil
 
 from fabric.version import VERSION
 if VERSION < (0, 9, 3, "final", 0):
@@ -110,8 +112,48 @@ CORE_TEMPLATE = [
     ('', 'views.py'),  
 ]
 
-def bootstrap(projectpath):
+def twitter_bootstrap(projectpath):
+    _setlocal_env(projectpath)
+    tmpdir = tempfile.mkdtemp()
     
+    def _download_extract(url, filename):
+        
+        import zipfile
+        import urllib
+        
+        topath = os.path.join(tmpdir,filename)
+        print 'Download file %s to %s' % (url, topath)
+        urllib.urlretrieve(url, topath)
+        
+        
+        extract_dir = os.path.join(tmpdir, '%s.dir' % filename)
+        print 'Extract file %s to %s' % (filename, extract_dir)
+        
+        zf = zipfile.ZipFile(topath, 'r')
+        zf.extractall(os.path.join(tmpdir, extract_dir))
+        
+        return os.path.join(extract_dir, os.listdir(extract_dir)[0])
+    
+    #handle botstrap
+    bootstrap_extract_dir = _download_extract('https://github.com/jlong/sass-twitter-bootstrap/zipball/master', 
+                      'sass-twitter-bootstrap.zip')
+
+    BOOTSTRAP_TEMPLATE = [
+        ('lib/','*.scss', os.path.join(projectpath, 'compass','config','sass')),
+        ('img/','*.*', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'img')),
+        ('js/','*.js', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'js', 'libs')),
+    ]
+    
+    print 'copy sass-twitter-bootstrap files..'
+    for frompath, mask, topath in BOOTSTRAP_TEMPLATE:
+        files = glob.iglob(os.path.join(bootstrap_extract_dir, frompath, mask))
+        for file in files:
+            if os.path.isfile(file):
+                shutil.copy2(file, topath)
+    
+    shutil.rmtree(tmpdir)
+
+def bootstrap(projectpath):
     skip_project = _check_exists_skip(projectpath)
     
     if not skip_project:
@@ -142,9 +184,13 @@ def bootstrap(projectpath):
         _create_from_template(os.path.join(projectpath,'src', env.projectname, 'core'), CORE_TEMPLATE)
         
         os.path.walk(env.projectpath, _replace_in_files, None)
+        
+        twitter_bootstrap(projectpath)
+        
         _exec_mngmt_command('resetload')
         #@todo runserver.sh + x!
-    
+
+
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
     if _check_exists_skip(env.projectenvpath) == False:
