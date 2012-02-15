@@ -5,7 +5,7 @@ syntax: glob
 .idea/*
 *.pyc
 {{projectname}}/settings_local.py
-{{projectname}}.dat
+{{projectname}}.db
 *.out
 {{projectname}}.log
 *.prefs
