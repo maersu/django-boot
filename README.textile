@@ -1,0 +1,27 @@
+h1. django-boot
+
+Boot your Django web project with one single simple command:
+
+fab bootstrap:/path/to/new/project/
+
+and everything works and looks fine: Django, Virtualenv, Pip, UI, Admininterface
+
+Attention: linux/max only
+Prerequisites: Fabric>=1.2.2, Git, Pip, Compass, Virtualenv
+
+h2. Commands
+
+* fab bootstrap:/home/workspace/projectname/
+* fab virtualenv:/home/workspace/projectname/
+* fab pip:/home/workspace/projectname/
+* fab twitter_bootstrap:/home/workspace/projectname/
+
+h2. Base
+
+* Django: https://www.djangoproject.com/
+* initializr: http://www.initializr.com/
+* Bootstrap, from Twitter: http://twitter.github.com/bootstrap/
+* Sass Twitter Bootstrap: http://thesassway.com/projects/sass-twitter-bootstrap
+* Django-James: https://github.com/atizo/djangojames
+
+
