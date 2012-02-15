@@ -13,3 +13,11 @@ pip install fabric>=1.2.2
 * fab pip:/home/workspace/projectname/
 
 
+
+Based on:
+
+* Django: https://www.djangoproject.com/
+* initializr: http://www.initializr.com/
+* Bootstrap, from Twitter: http://twitter.github.com/bootstrap/
+* Sass Twitter Bootstrap: http://thesassway.com/projects/sass-twitter-bootstrap
+
