@@ -41,7 +41,8 @@ def _check_exists_skip(path):
             return MERGE   
         else:
             warn('skip step')
-        return KEEP
+            return KEEP
+    return OVERWRITE
 
 def _create_from_template(root_path, templates):
     
@@ -177,6 +178,7 @@ def twitter_bootstrap(projectpath):
     shutil.rmtree(tmpdir)
 
 def bootstrap(projectpath):
+    
     skip_project = _check_exists_skip(projectpath)
     
     if skip_project in (OVERWRITE, MERGE):
@@ -208,7 +210,7 @@ def bootstrap(projectpath):
         
         _exec_mngmt_command('resetload')
 
-        #@todo runserver.sh + x!
+        
         _add_config_dict = {}
         def _add_config(replace_var, question):
             answer = prompt(question, default='<none>')
@@ -219,7 +221,11 @@ def bootstrap(projectpath):
         _add_config('python_version', 'Python version?')
             
         _replace_dict(env.projectpath, _add_config_dict)   
-            
+
+        local('chmod +x %s' % os.path.join(projectpath,'src', env.projectname, 'runserver.sh'))
+        
+        print '\nAttention: Run runserver.sh to compile CSS files!'
+          
 
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
