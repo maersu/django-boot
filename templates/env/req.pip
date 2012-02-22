@@ -1,8 +1,9 @@
 django==1.3.1
-django-debug-toolbar==0.8.5
+django-debug-toolbar==0.9.4
 django-extensions==0.7.1
-django-rosetta==0.6.3
+django-rosetta==0.6.5
 django-admin-tools==0.4.1
-FeedParser==5.0.1
+FeedParser==5.1
+django-shop
 -e git://github.com/iterativ/djangojames.git#egg=djangojames
 -e git://github.com/clintecker/python-googleanalytics.git@aee9adf9cbb494890626ba2fa22827747e0b1231#egg=python-googleanalytic

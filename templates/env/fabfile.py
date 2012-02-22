@@ -7,6 +7,7 @@ from fabric.utils import warn
 import xmlrpclib
 import pip
 from itertools import izip_longest
+import shutil
 
 from fabric.version import VERSION
 if VERSION < (0, 9, 3, "final", 0):
@@ -25,38 +26,43 @@ def _remote_path(*args):
 
 # environments
 env.python_version = '{{python_version}}'
-env.hosts = ['<some.host>']
+env.hosts = ['{{server}}']
+env.nginx_conf = '/etc/nginx/sites-enabled'
 env.local_app = _local_path('src', '{{projectname}}')
-env.local_static_root = _local_path('site_media')
-env.user = '<user>'
+env.local_static_root = _local_path(env.local_app, 'static')
+env.user = 'root'
 env.rsync_exclude = ['settings_local.py',
                      'settings_local.example.py',
                      '.svn/',
                      '.git/',
+                     'runserver.sh',
                      '.keep',
                      '*.pyc',
                      '{{projectname}}.dat']
 
-REMOTE_APP_TMPL = '/home/www'
+REMOTE_APP_TMPL = '/srv/www/{{projectname}}/'
 
 def stage():
     env.env = 'stage'
     env.remote_app = os.path.join(REMOTE_APP_TMPL, env.env)
     env.remote_virtualenv = _remote_path('{{projectname}}-env')
-    env.remote_virtualenv_py = '<path/to/virtualenv.py>'
+    env.remote_virtualenv_py = 'virtualenv'
     _warning()
 
 def prod():
     env.env = 'prod'
     env.remote_app = os.path.join(REMOTE_APP_TMPL, env.env)
     env.remote_virtualenv = _remote_path('{{projectname}}-env')
-    env.remote_virtualenv_py = '<path/to/virtualenv.py>'
+    env.remote_virtualenv_py = 'virtualenv'
     _warning()
 
 def deploy():
     require('env')
     
-    check_for_updates()
+    #check_for_updates()
+    run('mkdir -p %s' % _remote_path())
+    run('mkdir -p %s' % _remote_path('db'))
+    
     
     _ensure_virtualenv()
     # sources & templates
@@ -64,42 +70,47 @@ def deploy():
         remote_dir = env.remote_app,
         local_dir = env.local_app,
         exclude = env.rsync_exclude,
-    )    
-    run('mkdir -p %s' % _remote_path('{{projectname}}', 'public'))
-    # deploy static files    
-    #local('./manage.py collectstatic') # in a later iteration
+    )
+    
+    deploy_static()
+    put(_local_path('env', env.env, 'settings_local.py'), _remote_path('{{projectname}}'))
+    put(_local_path('env', env.env, 'nginx.conf'), os.path.join(env.nginx_conf, '%(env)s.{{projectname}}.conf' % env))
+    put(_local_path('env', 'robots.txt'), _remote_path('{{projectname}}', 'static'))
+    put(_local_path('env', 'req.pip'), _remote_path())
+
+    _update_packages()
+    _clear_pycs()
+    adjust_rights() 
+    
+    run('/etc/init.d/uwsgi restart')
+    run('/etc/init.d/nginx restart')
+    
+def deploy_static():
+    require('env')
+    local('python %(local_app)s/manage.py collectstatic --noinput' % env)
     rsync_project(
-        remote_dir = _remote_path('{{projectname}}', 'public'),
+        remote_dir = _remote_path('{{projectname}}'),
         local_dir = env.local_static_root,
         delete = True,
         exclude = env.rsync_exclude,
     )
+    shutil.rmtree(env.local_static_root)
+    adjust_rights() 
 
-    put(_local_path('env', env.env, 'settings_local.py'), _remote_path('{{projectname}}'))
-    
-    # deploy on alwaysdata
-    #put(_local_path('env', env.env, 'django.fcgi'), _remote_path('{{projectname}}', 'public'))
-    #run('chmod +x %s' % _remote_path('{{projectname}}', 'public', 'django.fcgi'))
-    #put(_local_path('env', 'htaccess'), _remote_path('{{projectname}}', 'public', '.htaccess'))
-    
-    put(_local_path('env', 'robots.txt'), _remote_path('{{projectname}}', 'public'))
-    put(_local_path('env', 'req.pip'), _remote_path())
-    
-    # link admin static files
-    admin_media = _remote_path('{{projectname}}', 'public', 'media')
-    if not exists(admin_media):
-        run('ln -s %s %s' % (_remote_path('{{projectname}}-env', 
-                            'src/django/django/contrib/admin/media/'),
-                            admin_media))
-    _update_packages()
-    _clear_pycs()
-    
-    run('touch %s' % _remote_path('{{projectname}}', 'public', 'django.fcgi'))
-    
 def delete():
     if env.env != 'stage': abort("only available for 'stage'")
-    run('rm -rf %s' % _remote_path('{{projectname}}'))
-    run('rm -rf %(remote_virtualenv)s' % env)
+    run('rm -rf %s' % _remote_path())
+
+def resetload():
+    require('env')
+    if env.env != 'stage': abort("only available for 'stage'")
+    with cd(_remote_path('{{projectname}}')):
+        _virtualenv('python -u manage.py resetload' % env)
+    adjust_rights() 
+
+def adjust_rights():
+    require('env')
+    run("chown -R uwsgi:uwsgi %(remote_app)s" % env) 
 
 def check_for_updates():
     
@@ -156,7 +167,7 @@ def _clear_pycs():
     
 # virtualenv targets
 def _virtualenv(command):
-    run("source %s/bin/activate && %s" % (env.remote_virtualenv, command))
+    print run("source %s/bin/activate && %s" % (env.remote_virtualenv, command))
         
 def _update_packages():
     _virtualenv('pip install --upgrade pip pyinotify')
@@ -165,6 +176,5 @@ def _update_packages():
 def _ensure_virtualenv():
     if not exists(env.remote_virtualenv):
         run("%(remote_virtualenv_py)s --no-site-packages --python=python%(python_version)s %(remote_virtualenv)s" % env)
-      
-        
+
         

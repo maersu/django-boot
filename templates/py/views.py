@@ -7,7 +7,5 @@ import os
 
 def start(request):
     context = {}
-    
-    context['readme']  = open(os.path.join(settings.PROJECT_ROOT, '..', '..', 'README.rst'))
     return TemplateResponse(request, 'start.html', context)
 

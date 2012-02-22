@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>{{projectname}} Prototype</title>
+    <title>{{projectname}} | {% block title %}{% endblock %}</title>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -31,7 +31,7 @@
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
     <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}img/apple-touch-icon-57x57-precomposed.png"> 
     <!-- For nokia devices: --> 
-    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ STATIC_URL }}media/img/favicon.ico" type="image/x-icon" />
 
     <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.2-respond-1.1.0.min.js"></script>
 	
@@ -61,12 +61,12 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</a>
-			<a class="brand" href="#">{{projectname}} | {% block title %}{% endblock %}</a>
+			<a class="brand" href="{% url start %}">{{projectname}}</a>
 			<div class="nav-collapse">
 			  	<ul class="nav">
-			    	<li class="active"><a href="#">Home</a></li>
-			    	<li><a href="#about">About</a></li>
-			    	<li><a href="#contact">Contact</a></li>
+			    	<li class="active"><a href="#">{% trans "Home" %}</a></li>
+			    	<li><a href="#">{% trans "About" %}</a></li>
+			    	<li><a href="#">{% trans "Contact" %}</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div>
@@ -78,15 +78,15 @@
 	{% endblock %}
 	<hr>
 	<footer>
-	  <p>&copy; {{projectname}} Company 2012</p>
+	  <p>&copy; MyCompany</p>
 	</footer>
 	
 </div> <!-- /container -->
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.1.min.js"><\/script>')</script>
-<script src="{{ STATIC_URL }}js/libs/bootstrap/transition.js"></script>
-<script src="{{ STATIC_URL }}js/libs/bootstrap/collapse.js"></script>
+<script src="{{ STATIC_URL }}js/libs/bootstrap-transition.js"></script>
+<script src="{{ STATIC_URL }}js/libs/bootstrap-collapse.js"></script>
 <script src="{{ STATIC_URL }}js/script.js"></script>
 </body>
 </html>

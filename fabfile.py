@@ -26,22 +26,27 @@ def _setlocal_env(projectpath):
         env.projectenvpath = env.projectpath + '-env'
         env.parentfolder = os.path.split(env.projecthome_path)[-1]
 
+OVERWRITE = 0
+MERGE = 1
+KEEP = 2
+
 def _check_exists_skip(path):
     if os.path.exists(path):
-        answer = prompt('Path %s already exists. Overwrite [yes] or merge [merge]? ' % path, default='no')
-        if answer == 'yes':
+        answer = prompt('Path %s already exists. Overwrite [o], merge [m] or keep [k]? ' % path, default='k')
+        if answer == 'o':
             local("rm -rf '%s'" % path)
-        elif answer == 'merge':
-            warn("merge into '%s'" % path)            
+            return OVERWRITE
+        elif answer == 'm':
+            warn("merge into '%s'" % path)         
+            return MERGE   
         else:
             warn('skip step')
-            return True
-    return False
+        return KEEP
 
 def _create_from_template(root_path, templates):
     
     def _copy_file(template, dirpath, template_path):
-        if len(template) > 2:
+        if len(template) > 2 and type(template[2]) == str:
             dirpath = os.path.join(dirpath, template[2])
         local("cp -r %s %s" % (template_path , dirpath))
 
@@ -75,6 +80,9 @@ def _create_from_template(root_path, templates):
                 _copy_file(template, dirpath, search_path)
             
             local("touch %s" % (os.path.join(dirpath,template[1])))
+            
+        if type(template[-1]) == dict:
+            _replace_dict(dirpath, template[-1])
 
 def _exec_mngmt_command(command, path='%(projectpath)s/src/%(projectname)s', manage_py='python manage.py'):
     
@@ -82,25 +90,40 @@ def _exec_mngmt_command(command, path='%(projectpath)s/src/%(projectname)s', man
     s = '/bin/bash -c "cd '+path+' && source %(projectenvpath)s/bin/activate && '+manage_py+' '+command+' --settings=%(projectname)s.settings "'
     print local(s % env)
 
+def _replace_dict(path, replace_dict):
+    
+        def _replace_in_files(arg, dirname, names):
+            for name in names:
+                filepath =  os.path.join(dirname, name)            
+                if os.path.isfile(filepath):
+                    for line in fileinput.input(filepath,inplace=1):
+                        for key, value in replace_dict.items():
+                            line = line.replace("{{%s}}" % key, value)
+                        sys.stdout.write(line)
+        
+        os.path.walk(path, _replace_in_files, None)    
+
 PROJECT_TEMPLATE = [         
     ('env/',),
     ('compass/',),
     ('src',),
     ('log', '.keep'),
     ('env/stage', 'settings_local.py'),
-    ('env/prod', 'settings_local.py'),    
+    ('env/prod', 'settings_local.py'),
+    ('env/stage', 'nginx.conf', {'env':'stage'}),
+    ('env/prod', 'nginx.conf', {'env':'prod'}),    
     ('', 'README.rst'),
-    ('db', '.keep'),
-    ('log', '.keep'),       
+    ('src/db', '.keep'),   
     ('', '.gitignore')    
 ]
 
 SRC_TEMPLATE = [
     ('media/', '.keep'),
     ('', 'settings_local.py'),
-    ('', 'settings_local.example.py'),
+    ('', 'settings_local.py', 'settings_local.example.py'),
     ('', 'urls.py'),    
     ('', 'settings.py'),     
+    ('', 'wsgi.py'),    
     ('', 'runserver.sh'),    
     ('external_fixtures/',),
 ]
@@ -156,47 +179,53 @@ def twitter_bootstrap(projectpath):
 def bootstrap(projectpath):
     skip_project = _check_exists_skip(projectpath)
     
-    if not skip_project:
+    if skip_project in (OVERWRITE, MERGE):
         _create_from_template(projectpath, PROJECT_TEMPLATE)
     
     virtualenv(projectpath)
         
-    if not skip_project:
+    if skip_project in (OVERWRITE, MERGE):
         _setlocal_env(projectpath)
 
-        _exec_mngmt_command('startproject %(projectname)s', path='%(projectpath)s/src/', manage_py='django-admin.py')
+        if skip_project == OVERWRITE:
+            _exec_mngmt_command('startproject %(projectname)s', path='%(projectpath)s/src/', manage_py='django-admin.py')
         _create_from_template(os.path.join(projectpath,'src', env.projectname), SRC_TEMPLATE)
            
         replace_dict = {'projectpath': env.projectpath, 'projectname': env.projectname, 
                         'parentfolder': env.parentfolder, 'projectenvpath': env.projectenvpath,
                         'projectsecret': ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])}
-        def _replace_in_files(arg, dirname, names):
-            for name in names:
-                filepath =  os.path.join(dirname, name)            
-                if os.path.isfile(filepath):
-                    for line in fileinput.input(filepath,inplace=1):
-                        for key, value in replace_dict.items():
-                            line = line.replace("{{%s}}" % key, value)
-                        sys.stdout.write(line)
         
-        os.path.walk(env.projectpath, _replace_in_files, None)
-        _exec_mngmt_command('startapp core')
+        _replace_dict(env.projectpath, replace_dict)
+        
+        
+        if skip_project == OVERWRITE:
+            _exec_mngmt_command('startapp core')
         _create_from_template(os.path.join(projectpath,'src', env.projectname, 'core'), CORE_TEMPLATE)
         
-        os.path.walk(env.projectpath, _replace_in_files, None)
+        _replace_dict(env.projectpath, replace_dict)
         
         twitter_bootstrap(projectpath)
         
         _exec_mngmt_command('resetload')
-        #@todo runserver.sh + x!
 
+        #@todo runserver.sh + x!
+        _add_config_dict = {}
+        def _add_config(replace_var, question):
+            answer = prompt(question, default='<none>')
+            if answer <> '<none>':
+                _add_config_dict[replace_var] = answer
+
+        _add_config('server', 'Servername?')
+        _add_config('python_version', 'Python version?')
+            
+        _replace_dict(env.projectpath, _add_config_dict)   
+            
 
 def virtualenv(projectpath):
     _setlocal_env(projectpath)
-    if _check_exists_skip(env.projectenvpath) == False:
+    if _check_exists_skip(env.projectenvpath) in (0,1):
         print local("virtualenv --no-site-packages  --python=python%(python_version)s %(projectenvpath)s" % env)
-        
-    pip(projectpath)
+        pip(projectpath)
 
 def pip(projectpath):
     
