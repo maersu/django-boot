@@ -98,12 +98,14 @@ def deploy_static():
     adjust_rights() 
 
 def delete():
-    if env.env != 'stage': abort("only available for 'stage'")
+    if env.env != 'stage': 
+        _warning2('Delete entire environment and all application files ?')
     run('rm -rf %s' % _remote_path())
 
 def resetload():
     require('env')
-    if env.env != 'stage': abort("only available for 'stage'")
+    if env.env != 'stage': 
+        _warning2('Reset database?')
     with cd(_remote_path('{{projectname}}')):
         _virtualenv('python -u manage.py resetload' % env)
     adjust_rights() 
@@ -176,5 +178,4 @@ def _update_packages():
 def _ensure_virtualenv():
     if not exists(env.remote_virtualenv):
         run("%(remote_virtualenv_py)s --no-site-packages --python=python%(python_version)s %(remote_virtualenv)s" % env)
-
         
