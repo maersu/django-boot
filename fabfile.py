@@ -104,24 +104,10 @@ def _replace_dict(path, replace_dict):
         
         os.path.walk(path, _replace_in_files, None)    
 
-PROJECT_TEMPLATE = [         
-    ('env/',),
-    ('compass/',),
-    ('src',),
-    ('log', '.keep'),
-    ('env/stage', 'settings_local.py'),
-    ('env/prod', 'settings_local.py'),
-    ('env/stage', 'nginx.conf', {'env':'stage'}),
-    ('env/prod', 'nginx.conf', {'env':'prod'}),    
-    ('', 'README.rst'),
-    ('src/db', '.keep'),   
-    ('', '.gitignore')    
-]
-
 SRC_TEMPLATE = [
     ('media/', '.keep'),
-    ('', 'settings_local.py'),
-    ('', 'settings_local.py', 'settings_local.example.py'),
+    ('', 'settings_local.py', {'logpath':''}),
+    ('', 'settings_local.py', 'settings_local.example.py', {'logpath':''}),
     ('', 'urls.py'),    
     ('', 'settings.py'),     
     ('', 'wsgi.py'),    
@@ -178,7 +164,23 @@ def twitter_bootstrap(projectpath):
     shutil.rmtree(tmpdir)
 
 def bootstrap(projectpath):
-    
+
+    _setlocal_env(projectpath)
+
+    PROJECT_TEMPLATE = [         
+        ('env/',),
+        ('compass/',),
+        ('src',),
+        ('log', '.keep'),
+        ('env/stage', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/stage/log/app.log'}),
+        ('env/prod', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/prod/log/app.log'}),
+        ('env/stage', 'nginx.conf', {'env':'stage'}),
+        ('env/prod', 'nginx.conf', {'env':'prod'}),    
+        ('', 'README.rst'),
+        ('src/db', '.keep'),   
+        ('', '.gitignore')    
+    ]
+ 
     skip_project = _check_exists_skip(projectpath)
     
     if skip_project in (OVERWRITE, MERGE):
@@ -187,8 +189,7 @@ def bootstrap(projectpath):
     virtualenv(projectpath)
         
     if skip_project in (OVERWRITE, MERGE):
-        _setlocal_env(projectpath)
-
+        
         if skip_project == OVERWRITE:
             _exec_mngmt_command('startproject %(projectname)s', path='%(projectpath)s/src/', manage_py='django-admin.py')
         _create_from_template(os.path.join(projectpath,'src', env.projectname), SRC_TEMPLATE)
@@ -198,7 +199,6 @@ def bootstrap(projectpath):
                         'projectsecret': ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])}
         
         _replace_dict(env.projectpath, replace_dict)
-        
         
         if skip_project == OVERWRITE:
             _exec_mngmt_command('startapp core')
@@ -210,7 +210,6 @@ def bootstrap(projectpath):
         
         _exec_mngmt_command('resetload')
 
-        
         _add_config_dict = {}
         def _add_config(replace_var, question):
             answer = prompt(question, default='<none>')

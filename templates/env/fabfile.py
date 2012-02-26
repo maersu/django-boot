@@ -110,9 +110,9 @@ def resetload():
         _virtualenv('python -u manage.py resetload' % env)
     adjust_rights() 
 
-def adjust_rights():
+def adjust_rights(user='uwsgi'):
     require('env')
-    run("chown -R uwsgi:uwsgi %(remote_app)s" % env) 
+    run("chown -R %(user)s:%(user)s %(remote_app)s" % {'remote_app': env.remote_app, 'user':user}) 
 
 def check_for_updates():
     
@@ -172,8 +172,10 @@ def _virtualenv(command):
     print run("source %s/bin/activate && %s" % (env.remote_virtualenv, command))
         
 def _update_packages():
+    adjust_rights('root') 
     _virtualenv('pip install --upgrade pip pyinotify')
     _virtualenv('pip install -r %(remote_app)s/req.pip' % env)
+    adjust_rights() 
 
 def _ensure_virtualenv():
     if not exists(env.remote_virtualenv):
