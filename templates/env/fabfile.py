@@ -18,6 +18,10 @@ def _warning():
     warn('Accessing \x1b[5;31m%(env)s\x1b[0;39m environement' % env)
     prompt("Enter 'c' to continue", validate=r'c$')
 
+def _warning2(warning = 'Do?'):
+    warn('\x1b[5;31m%s: %s \x1b[0;39m' % (env.env.upper(),warning))
+    prompt("Enter 'yes, do it!' to continue", validate=r'yes, do it!$')
+
 def _local_path(*args):
     return os.path.join(os.path.abspath(os.path.dirname(__file__)), '..',  *args)
 
@@ -62,6 +66,7 @@ def deploy():
     #check_for_updates()
     run('mkdir -p %s' % _remote_path())
     run('mkdir -p %s' % _remote_path('db'))
+    run('mkdir -p %s' % _remote_path('log'))
     
     
     _ensure_virtualenv()

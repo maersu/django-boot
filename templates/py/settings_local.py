@@ -49,7 +49,7 @@ LOGGING = {
         'file': {
             'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': '{{logpath}}deinkurs.log',
+            'filename': '{{logpath}}{{projectname}}.log',
             'formatter':'verbose',
         }, 
     },
