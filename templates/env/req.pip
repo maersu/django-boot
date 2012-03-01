@@ -7,3 +7,4 @@ FeedParser==5.1
 django-shop
 -e git://github.com/iterativ/djangojames.git#egg=djangojames
 -e git://github.com/clintecker/python-googleanalytics.git@aee9adf9cbb494890626ba2fa22827747e0b1231#egg=python-googleanalytic
+django_compressor

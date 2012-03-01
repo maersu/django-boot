@@ -4,7 +4,7 @@ import os
 import socket
 import sys
 
-DEBUG = False
+DEBUG = {{debug}}
 USE_DEBUG_TOOLBAR = DEBUG
 INTERNAL_IPS = ('127.0.0.1',)
 

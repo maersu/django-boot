@@ -55,6 +55,17 @@ STATICFILES_DIRS = (
                     os.path.join(PROJECT_ROOT, '../../../{{projectname}}-env/lib/python2.7/site-packages/admin_tools/media/'),
 )
 
+STATICFILES_FINDERS = (
+       "django.contrib.staticfiles.finders.FileSystemFinder",
+       "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+       "compressor.finders.CompressorFinder"
+)
+
+COMPRESS_CSS_FILTERS = [
+        'compressor.filters.css_default.CssAbsoluteFilter', 
+        'compressor.filters.cssmin.CSSMinFilter'
+]
+
 FIXTURE_DIRS = (
     os.path.join(PROJECT_ROOT, 'external_fixtures/'),
 )
@@ -115,6 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles', 
     'django_extensions',
     'djangojames',
+    'compressor',
     '{{projectname}}.core',
 )
 

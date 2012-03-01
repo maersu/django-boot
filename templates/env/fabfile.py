@@ -40,6 +40,7 @@ env.rsync_exclude = ['settings_local.py',
                      '.svn/',
                      '.git/',
                      'runserver.sh',
+                     'CACHE/'
                      '.keep',
                      '*.pyc',
                      '{{projectname}}.dat']

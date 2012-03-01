@@ -106,8 +106,8 @@ def _replace_dict(path, replace_dict):
 
 SRC_TEMPLATE = [
     ('media/', '.keep'),
-    ('', 'settings_local.py', {'logpath':''}),
-    ('', 'settings_local.py', 'settings_local.example.py', {'logpath':''}),
+    ('', 'settings_local.py', {'logpath':'', 'debug': 'True'}),
+    ('', 'settings_local.py', 'settings_local.example.py', {'logpath':'', 'debug': 'True'}),
     ('', 'urls.py'),    
     ('', 'settings.py'),     
     ('', 'wsgi.py'),    
@@ -143,23 +143,36 @@ def twitter_bootstrap(projectpath):
         zf.extractall(os.path.join(tmpdir, extract_dir))
         
         return os.path.join(extract_dir, os.listdir(extract_dir)[0])
-    
+
+    def _copy_from(extract_dir, template):
+        for frompath, mask, topath in template:
+            files = glob.iglob(os.path.join(extract_dir, frompath, mask))
+            for file in files:
+                if os.path.isfile(file):
+                    shutil.copy2(file, topath)
+   
     #handle botstrap
-    bootstrap_extract_dir = _download_extract('https://github.com/jlong/sass-twitter-bootstrap/zipball/master', 
+    sass_extract_dir = _download_extract('https://github.com/jlong/sass-twitter-bootstrap/zipball/master', 
                       'sass-twitter-bootstrap.zip')
 
-    BOOTSTRAP_TEMPLATE = [
+    SASS_TEMPLATE = [
         ('lib/','*.scss', os.path.join(projectpath, 'compass','config','sass')),
         ('img/','*.*', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'img')),
-        ('js/','*.js', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'js', 'libs')),
+        #('js/','*.js', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'js', 'libs')),
     ]
     
     print 'copy sass-twitter-bootstrap files..'
-    for frompath, mask, topath in BOOTSTRAP_TEMPLATE:
-        files = glob.iglob(os.path.join(bootstrap_extract_dir, frompath, mask))
-        for file in files:
-            if os.path.isfile(file):
-                shutil.copy2(file, topath)
+    _copy_from(sass_extract_dir, SASS_TEMPLATE)
+    
+    bootstrap_extract_dir = _download_extract('http://twitter.github.com/bootstrap/assets/bootstrap.zip',
+                      'bootstrap.zip')
+
+    BOOTSTRAP_TEMPLATE = [
+        ('js/','*.js', os.path.join(projectpath,'src', env.projectname, 'core', 'static', 'js', 'libs')),
+    ]
+    print 'copy bootstrap files..'
+
+    _copy_from(bootstrap_extract_dir, BOOTSTRAP_TEMPLATE)
     
     shutil.rmtree(tmpdir)
 
@@ -172,8 +185,8 @@ def bootstrap(projectpath):
         ('compass/',),
         ('src',),
         ('log', '.keep'),
-        ('env/stage', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/stage/log/'}),
-        ('env/prod', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/prod/log/'}),
+        ('env/stage', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/stage/log/', 'debug': 'False'}),
+        ('env/prod', 'settings_local.py', {'logpath': '/srv/www/'+env.projectname+'/prod/log/', 'debug': 'False'}),
         ('env/stage', 'nginx.conf', {'env':'stage'}),
         ('env/prod', 'nginx.conf', {'env':'prod'}),    
         ('', 'README.rst'),
@@ -217,7 +230,7 @@ def bootstrap(projectpath):
                 _add_config_dict[replace_var] = answer
 
         _add_config('server', 'Servername?')
-        _add_config('python_version', 'Python version?')
+        _add_config('python_version', 'Python version server?')
             
         _replace_dict(env.projectpath, _add_config_dict)   
 
