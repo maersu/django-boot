@@ -9,7 +9,7 @@ USE_DEBUG_TOOLBAR = DEBUG
 INTERNAL_IPS = ('127.0.0.1',)
 
 ADMINS = (
-     #
+     # ('your name', 'your@email'),
 )
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),'../', 'db','{{projectname}}.db')
@@ -45,6 +45,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         },
         'file': {
             'level':'INFO',
@@ -55,17 +56,16 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers':['file'],
+            'handlers':['mail_admins','file'],
             'propagate': False,
         },
         'django.request': {
-            'handlers':['file'],
+            'handlers':['mail_admins','file'],
             'propagate': False,
         },
         'django': {
-            'handlers':['console', 'mail_admins','file'],
+            'handlers':['mail_admins','file'],
             'propagate': True,
-            'level':'INFO',
         },
     }
 }
