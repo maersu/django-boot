@@ -88,9 +88,17 @@ def deploy():
     _clear_pycs()
     adjust_rights() 
     
+    restart()
+
+def restart():
+    require('env')
     run('/etc/init.d/uwsgi restart')
     run('/etc/init.d/nginx restart')
-    
+
+def taillog():
+    require('env')
+    run('tail -f %s --lines=30' % _remote_path('log', '{{projectname}}.log'))
+
 def deploy_static():
     require('env')
     local('python %(local_app)s/manage.py collectstatic --noinput' % env)
