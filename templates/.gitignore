@@ -2,10 +2,10 @@
 /.pydevproject
 .idea/*
 *.pyc
-{{projectname}}/settings_local.py
+src/{{projectname}}/settings_local.py
 {{projectname}}.db
 *.out
 {{projectname}}.log
 *.prefs
 .sass-cache
-{{projectname}}/static
+src/{{projectname}}/static

@@ -85,7 +85,7 @@ def _create_from_template(root_path, templates):
         if type(template[-1]) == dict:
             _replace_dict(dirpath, template[-1])
 
-def _exec_mngmt_command(command, path='%(projectpath)s/src/%(projectname)s', manage_py='python manage.py'):
+def _exec_mngmt_command(command, path='%(projectpath)s/src/', manage_py='python manage.py'):
     
     #s = '/bin/bash -c " cd %(projectpath)s/src/%(projectname)s && source %(projectenvpath)s/bin/activate && django-admin.py '+command+'"'
     s = '/bin/bash -c "cd '+path+' && source %(projectenvpath)s/bin/activate && '+manage_py+' '+command+' --settings=%(projectname)s.settings "'
@@ -110,9 +110,9 @@ SRC_TEMPLATE = [
     ('', 'settings_local.py', 'settings_local.example.py', {'logpath':'', 'debug': 'True'}),
     ('', 'urls.py'),    
     ('', 'settings.py'),     
-    ('', 'wsgi.py'),    
-    ('', 'runserver.sh'),    
+    ('', 'wsgi.py'), 
     ('external_fixtures/',),
+    ('core/',),
 ]
 
 CORE_TEMPLATE = [
@@ -191,7 +191,8 @@ def bootstrap(projectpath):
         ('env/prod', 'nginx.conf', {'env':'prod'}),    
         ('', 'README.rst'),
         ('src/db', '.keep'),   
-        ('', '.gitignore')    
+        ('', '.gitignore'),
+        ('src/', 'runserver.sh'),   
     ]
  
     skip_project = _check_exists_skip(projectpath)
@@ -204,7 +205,7 @@ def bootstrap(projectpath):
     if skip_project in (OVERWRITE, MERGE):
         
         if skip_project == OVERWRITE:
-            _exec_mngmt_command('startproject %(projectname)s', path='%(projectpath)s/src/', manage_py='django-admin.py')
+            _exec_mngmt_command('startproject %(projectname)s .', manage_py='django-admin.py')
         _create_from_template(os.path.join(projectpath,'src', env.projectname), SRC_TEMPLATE)
            
         replace_dict = {'projectpath': env.projectpath, 'projectname': env.projectname, 
@@ -214,7 +215,7 @@ def bootstrap(projectpath):
         _replace_dict(env.projectpath, replace_dict)
         
         if skip_project == OVERWRITE:
-            _exec_mngmt_command('startapp core')
+            _exec_mngmt_command('startapp core ./%(projectname)s/core' % env)
         _create_from_template(os.path.join(projectpath,'src', env.projectname, 'core'), CORE_TEMPLATE)
         
         _replace_dict(env.projectpath, replace_dict)
@@ -234,10 +235,10 @@ def bootstrap(projectpath):
             
         _replace_dict(env.projectpath, _add_config_dict)   
 
-        local('chmod +x %s' % os.path.join(projectpath,'src', env.projectname, 'runserver.sh'))
+        local('chmod +x %s' % os.path.join(projectpath,'src', 'runserver.sh'))
         
         print '\nAttention: Run runserver.sh to compile CSS files!'
-          
+        
 
 def virtualenv(projectpath):
     _setlocal_env(projectpath)

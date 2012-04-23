@@ -12,7 +12,7 @@ template.add_to_builtins('django.templatetags.i18n')
 urlpatterns = patterns('',
     url(r'^admin_tools/', include('admin_tools.urls')),
     (r'^admin/', include(admin.site.urls)),
-    (r'^', include('core.urls')),
+    (r'^', include('{{projectname}}.core.urls')),
 )
 
 if settings.DEBUG:

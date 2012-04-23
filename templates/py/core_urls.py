@@ -4,6 +4,6 @@
 from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 
-urlpatterns = patterns('core.views',
+urlpatterns = patterns('{{projectname}}.core.views',
     url('^$', 'start', name='start'),  
 )

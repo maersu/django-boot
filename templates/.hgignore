@@ -4,10 +4,10 @@ syntax: glob
 /.pydevproject
 .idea/*
 *.pyc
-{{projectname}}/settings_local.py
+{{projectname}}/src/settings_local.py
 {{projectname}}.db
 *.out
 {{projectname}}.log
 *.prefs
 .sass-cache
-{{projectname}}/static
+{{projectname}}/src/static
