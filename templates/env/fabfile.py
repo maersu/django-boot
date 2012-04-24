@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os, sys, re, commands
 from fabric.api import *
 from fabric.contrib.console import *
@@ -29,10 +31,11 @@ def _remote_path(*args):
     return os.path.join(env.remote_app, *args)
 
 # environments
-env.python_version = '{{python_version}}'
-env.hosts = ['{{server}}']
+env.python_version = '2.6'
+env.hosts = ['52prototypes.ch']
 env.nginx_conf = '/etc/nginx/sites-enabled'
 env.local_app = _local_path('src', '{{projectname}}')
+env.local_src = _local_path('src')
 env.local_static_root = _local_path(env.local_app, 'static')
 env.user = 'root'
 env.rsync_exclude = ['settings_local.py',
@@ -83,11 +86,11 @@ def deploy():
     put(_local_path('env', env.env, 'nginx.conf'), os.path.join(env.nginx_conf, '%(env)s.{{projectname}}.conf' % env))
     put(_local_path('env', 'robots.txt'), _remote_path('{{projectname}}', 'static'))
     put(_local_path('env', 'req.pip'), _remote_path())
+    put(_local_path('src', 'manage.py'), _remote_path())
 
     _update_packages()
     _clear_pycs()
     adjust_rights() 
-    
     restart()
 
 def restart():
@@ -98,10 +101,10 @@ def restart():
 def taillog():
     require('env')
     run('tail -f %s --lines=30' % _remote_path('log', '{{projectname}}.log'))
-
+  
 def deploy_static():
     require('env')
-    local('python %(local_app)s/manage.py collectstatic --noinput' % env)
+    local('python %(local_src)s/manage.py collectstatic --noinput' % env)
     rsync_project(
         remote_dir = _remote_path('{{projectname}}'),
         local_dir = env.local_static_root,
@@ -120,8 +123,8 @@ def resetload():
     require('env')
     if env.env != 'stage': 
         _warning2('Reset database?')
-    with cd(_remote_path('{{projectname}}')):
-        _virtualenv('python -u manage.py resetload' % env)
+    with cd(_remote_path()):
+        _virtualenv('python -u manage.py resetload -y' % env)
     adjust_rights() 
 
 def adjust_rights(user='uwsgi'):

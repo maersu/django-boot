@@ -1,5 +1,6 @@
-#Wed Feb 22 15:15:53 CET 2012
+#Tue Apr 24 23:18:40 CEST 2012
 eclipse.preferences.version=1
+encoding//templates/env/fabfile.py=utf-8
 encoding//templates/py/core_urls.py=utf-8
 encoding//templates/py/settings.py=utf-8
 encoding//templates/py/settings_local.py=utf-8
